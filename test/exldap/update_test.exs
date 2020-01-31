@@ -10,8 +10,8 @@ defmodule Exldap.UpdateTest do
 
   describe "Add an entry" do
     setup %{conn: conn, attrs: attrs} do
-      result = Update.add(conn, "OU=NewOrgUnit,DC=example,DC=org", attrs)
-      {:ok, [entry]} = conn |> load("OU=NewOrgUnit,DC=example,DC=org")
+      result = Update.add(conn, "OU=NewOrgUnit,OU=test,DC=example,DC=org", attrs)
+      {:ok, [entry]} = conn |> load("OU=NewOrgUnit,OU=test,DC=example,DC=org")
       {:ok, %{result: result, entry: entry}}
     end
 
@@ -44,7 +44,7 @@ defmodule Exldap.UpdateTest do
   end
 
   test "add an entry that already exists", %{conn: conn} do
-    with dn <- "CN=dupe,DC=example,DC=org",
+    with dn <- "CN=dupe,OU=test,DC=example,DC=org",
          attrs <- %{objectClass: ["top", "person"], sn: "Dupe"} do
       assert Update.add(conn, dn, attrs) == :ok
       assert Update.add(conn, dn, attrs) == {:error, :entryAlreadyExists}
@@ -52,7 +52,7 @@ defmodule Exldap.UpdateTest do
   end
 
   test "delete an entry", %{conn: conn} do
-    with dn <- "CN=disposable,DC=example,DC=org",
+    with dn <- "CN=disposable,OU=test,DC=example,DC=org",
          attrs <- %{objectClass: ["top", "person"], sn: "Disposable"} do
       assert Update.add(conn, dn, attrs) == :ok
       assert Update.delete(conn, dn) == :ok
@@ -61,12 +61,12 @@ defmodule Exldap.UpdateTest do
   end
 
   test "delete an entry that doesn't exist", %{conn: conn} do
-    assert Update.delete(conn, "CN=nothing,DC=example,DC=org") == {:error, :noSuchObject}
+    assert Update.delete(conn, "CN=nothing,OU=test,DC=example,DC=org") == {:error, :noSuchObject}
   end
 
   describe "modify an object" do
     setup %{conn: conn} do
-      dn = "CN=changeme,DC=example,DC=org"
+      dn = "CN=changeme,OU=test,DC=example,DC=org"
 
       :ok =
         Update.add(conn, dn, %{

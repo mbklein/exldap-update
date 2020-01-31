@@ -17,27 +17,36 @@ defmodule Exldap.UpdateCase do
     end
   end
 
+  setup_all do
+    with {:ok, connection} <- Exldap.connect() do
+      :eldap.add(connection, 'OU=test,DC=example,DC=org', [
+        {'objectClass', ['top', 'organizationalUnit']}
+      ])
+    end
+
+    :ok
+  end
+
   setup do
     on_exit(&empty_base/0)
   end
 
   def empty_base do
     with {:ok, connection} <- Exldap.connect(),
-         base <- "DC=example,DC=org" do
+         base <- "ou=test,dc=example,dc=org" do
       {:ok, children} =
         Exldap.search(connection,
           base: base,
           scope: :eldap.wholeSubtree(),
-          filter:
-            Exldap.with_and([
-              Exldap.negate(Exldap.equalityMatch("distinguishedName", base)),
-              Exldap.equalityMatch("objectClass", "top")
-            ])
+          filter: Exldap.equalityMatch("objectClass", "top")
         )
 
       children
       |> Enum.each(fn leaf ->
-        :eldap.delete(connection, leaf.object_name)
+        case leaf.object_name |> to_string() |> String.downcase() do
+          ^base -> :noop
+          dn -> :eldap.delete(connection, to_charlist(dn))
+        end
       end)
     end
   end
