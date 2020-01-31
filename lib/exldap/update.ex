@@ -123,12 +123,7 @@ defmodule Exldap.Update do
           true -> String.to_atom(to_string(key))
         end
 
-      val =
-        cond do
-          is_list(val) -> val
-          true -> [val]
-        end
-
+      val = if is_list(val), do: val, else: [val]
       acc |> Keyword.update(key, val, fn v -> v ++ val end)
     end)
   end

@@ -1,4 +1,8 @@
 defmodule Exldap.UpdateCase do
+  @moduledoc """
+  Helpers for Exldap.Update tests
+  """
+
   use ExUnit.CaseTemplate
 
   using do

@@ -38,6 +38,7 @@ defmodule Exldap.Update.MixProject do
   defp deps do
     [
       {:assertions, "~> 0.15.0", only: :test},
+      {:credo, "~> 1.2.1", only: [:dev, :test]},
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.19", only: [:dev, :docs]},
       {:exldap, "~> 0.6.3"}

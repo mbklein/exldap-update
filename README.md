@@ -2,6 +2,9 @@
 
 A module for updating LDAP from Elixir via [Exldap](https://hexdocs.pm/exldap)
 
+[![CircleCI](https://circleci.com/gh/mbklein/exldap-update.svg?style=svg)](https://circleci.com/gh/mbklein/exldap-update)
+[![Coverage Status](https://coveralls.io/repos/github/mbklein/exldap-update/badge.svg?branch=master)](https://coveralls.io/github/mbklein/exldap-update?branch=master)
+
 ## Installation
 
 The package can be installed by adding `exldap_update` to your list of
