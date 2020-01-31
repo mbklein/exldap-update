@@ -7,7 +7,10 @@ jobs:
       - image: circleci/elixir:1.9
         environment:
           MIX_ENV: test
-      - image: osixia/openldap
+      - image: dinkel/openldap
+        environment:
+          SLAPD_DOMAIN: example.org
+          SLAPD_PASSWORD: admin
     steps:
       - checkout
       - restore_cache:
