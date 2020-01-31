@@ -32,7 +32,7 @@ module with some syntactic sugar sprinkled on top:
 * Attributes can be passed to `add` either as a map or a keyword list with strings
   or atoms as keys
 
-```
+```elixir
   {:ok, connection} = Exldap.connect()
   dn = "CN=ghopper,OU=people,DC=example,DC=org"
   attrs = %{objectClass: ["top", "person"], sn: "Hopper", description: "Admiral Grace Hopper"}
