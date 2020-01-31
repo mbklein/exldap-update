@@ -127,5 +127,13 @@ defmodule Exldap.UpdateTest do
 
       assert Exldap.get_attribute!(entry, "sn") == "Changed"
     end
+
+    test "modify/5", %{conn: conn, dn: dn} do
+      assert :ok == Update.modify(conn, dn, {:add, :description, "Change for Object"})
+      {:ok, [entry]} = conn |> load(dn)
+
+      Exldap.get_attribute!(entry, "description")
+      |> assert_lists_equal(["Object for Change", "Change for Object"])
+    end
   end
 end

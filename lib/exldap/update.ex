@@ -5,6 +5,7 @@ defmodule Exldap.Update do
 
   @type distinguished_name :: String.t()
   @type modify_op :: term()
+  @type mod_op_name :: :add | :delete | :replace
   @type return_value :: :ok | {:ok, {:referral, [String.t()]}} | {:error, term()}
 
   @doc """
@@ -74,6 +75,7 @@ defmodule Exldap.Update do
 
   ## Examples:
 
+      # Single modification
       iex> Exldap.Update.modify(
       ...>   connection,
       ...>   "CN=someUser,OU=Accounts,DC=example,DC=com",
@@ -81,6 +83,7 @@ defmodule Exldap.Update do
       ...> )
       :ok
 
+      # Multiple modifications
       iex> Exldap.Update.modify(
       ...>   connection,
       ...>   "CN=someUser,OU=Accounts,DC=example,DC=com",
@@ -90,13 +93,46 @@ defmodule Exldap.Update do
       ...>   ]
       ...> )
       :ok
+
+      # Flat form
+      iex> Exldap.Update.modify(
+      ...>   connection,
+      ...>   "CN=someUser,OU=Accounts,DC=example,DC=com",
+      ...>   {:add, :displayName, "Some User"}
+      ...> )
+      :ok
+
+      iex> Exldap.Update.modify(
+      ...>   connection,
+      ...>   "CN=someUser,OU=Accounts,DC=example,DC=com",
+      ...>   [
+      ...>     {:add, :mail, ["someuser@example.com", "some.user@example.com"]},
+      ...>     {:delete, :displayName, "Some User"}
+      ...>   ]
+      ...> )
+      :ok
   """
   @spec modify(pid(), distinguished_name(), modify_op() | list(modify_op())) :: return_value()
   def modify(connection, dn, ops) when is_list(ops) do
+    ops =
+      ops
+      |> Enum.map(fn op ->
+        case op do
+          {:add, _, _} -> convert_op_spec(op)
+          {:delete, _, _} -> convert_op_spec(op)
+          {:replace, _, _} -> convert_op_spec(op)
+          _ -> op
+        end
+      end)
+
     :eldap.modify(connection, force_charlist(dn), ops)
   end
 
   def modify(connection, dn, op), do: modify(connection, dn, [op])
+
+  defp convert_op_spec({op, type, values}) do
+    apply(__MODULE__, String.to_atom("mod_#{op}"), [type, values])
+  end
 
   defp convert_attribute_value({key, val}) when is_list(val) do
     {
