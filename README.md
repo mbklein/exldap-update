@@ -43,8 +43,8 @@ module with some syntactic sugar sprinkled on top:
     {:error, other} -> IO.puts "Error: #{other}"
   end
 
-  Exldap.Udpate.modify(connection dn, Exldap.Update.mod_add("displayName", "Admiral Grace Hopper"))
-  Exldap.Udpate.modify(connection dn, Exldap.Update.mod_replace("description", "Hopper, Grace (1906-1992)"))
+  Exldap.Udpate.modify(connection, dn, Exldap.Update.mod_add("displayName", "Admiral Grace Hopper"))
+  Exldap.Udpate.modify(connection, dn, Exldap.Update.mod_replace("description", "Hopper, Grace (1906-1992)"))
   
   Exldap.Update.delete(connection, dn)
 ```

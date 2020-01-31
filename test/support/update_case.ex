@@ -28,7 +28,9 @@ defmodule Exldap.UpdateCase do
   end
 
   setup do
+    {:ok, connection} = Exldap.connect()
     on_exit(&empty_base/0)
+    {:ok, conn: connection}
   end
 
   def empty_base do
